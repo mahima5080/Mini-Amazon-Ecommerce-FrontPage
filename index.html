@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Amazon | E-Commerce Front Page</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            amazon: {
+              navy: '#131921',
+              light: '#232f3e',
+              yellow: '#febd69',
+              orange: '#f08804',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 flex flex-col min-h-screen">
+
+  <!-- Header / Navbar -->
+  <header class="bg-amazon-navy text-white sticky top-0 z-40 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <!-- Logo -->
+      <a href="#" onclick="showHome()" class="flex items-center gap-1 text-2xl font-bold tracking-tight text-white hover:text-amazon-yellow transition">
+        <i class="fa-brands fa-amazon text-amazon-yellow text-3xl"></i>
+        <span>mini<span class="text-amazon-yellow">amazon</span></span>
+      </a>
+
+      <!-- Search Bar -->
+      <div class="flex-1 max-w-2xl hidden md:flex items-center">
+        <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Search electronics, fashion, home..." class="w-full px-4 py-2 text-gray-800 rounded-l-md focus:outline-none text-sm">
+        <button onclick="filterProducts()" class="bg-amazon-yellow hover:bg-amazon-orange text-amazon-navy px-5 py-2 rounded-r-md font-bold transition">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-6">
+        <button onclick="showHome()" class="hover:text-amazon-yellow text-sm font-medium hidden sm:block">Home</button>
+        <button onclick="toggleCartSidebar()" class="relative flex items-center gap-2 hover:text-amazon-yellow transition">
+          <i class="fa-solid fa-cart-shopping text-2xl"></i>
+          <span class="text-sm font-bold hidden sm:inline">Cart</span>
+          <span id="cartBadge" class="absolute -top-2 -right-2 bg-amazon-orange text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <div class="p-2 bg-amazon-light md:hidden">
+      <input type="text" id="searchInputMobile" oninput="filterProductsMobile()" placeholder="Search products..." class="w-full px-3 py-1.5 text-gray-800 rounded-md text-sm focus:outline-none">
+    </div>
+
+    <!-- Category Strip -->
+    <div class="bg-amazon-light text-sm px-4 py-2 overflow-x-auto whitespace-nowrap flex gap-4 text-gray-200">
+      <button onclick="filterCategory('All')" class="hover:text-amazon-yellow font-medium active-cat text-amazon-yellow">All Categories</button>
+      <button onclick="filterCategory('Electronics')" class="hover:text-amazon-yellow">Electronics</button>
+      <button onclick="filterCategory('Fashion')" class="hover:text-amazon-yellow">Fashion</button>
+      <button onclick="filterCategory('Home & Kitchen')" class="hover:text-amazon-yellow">Home & Kitchen</button>
+      <button onclick="filterCategory('Books')" class="hover:text-amazon-yellow">Books</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+    
+    <!-- Hero Banner -->
+    <div class="bg-gradient-to-r from-amazon-light to-amazon-navy rounded-xl p-6 md:p-10 text-white mb-8 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="space-y-3 max-w-xl text-center md:text-left">
+        <span class="bg-amazon-orange text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full text-white">Mega Sale Event</span>
+        <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">Upgrade Your Tech & Style</h1>
+        <p class="text-gray-300 text-sm md:text-base">Get up to 40% off top electronics, fashion, and everyday home essentials.</p>
+      </div>
+      <div class="text-center">
+        <button onclick="filterCategory('Electronics')" class="bg-amazon-yellow hover:bg-amazon-orange text-amazon-navy font-bold px-6 py-3 rounded-lg shadow transition">Shop Best Sellers</button>
+      </div>
+    </div>
+
+    <!-- Product Grid Section -->
+    <section id="productsSection">
+      <div class="flex items-center justify-between mb-6">
+        <h2 id="sectionTitle" class="text-2xl font-bold text-gray-800">All Products</h2>
+        <span id="productCount" class="text-sm text-gray-500 font-medium">Showing 8 products</span>
+      </div>
+
+      <!-- Grid -->
+      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- Products populated by JS -->
+      </div>
+    </section>
+
+    <!-- Cart Page View (Hidden by default) -->
+    <section id="cartPageView" class="hidden bg-white rounded-xl shadow-md p-6">
+      <h2 class="text-2xl font-bold mb-6 border-b pb-4">Shopping Cart</h2>
+      <div id="cartPageItems" class="divide-y">
+        <!-- Cart Items populated by JS -->
+      </div>
+      <div class="mt-6 pt-4 border-t flex flex-col sm:flex-row justify-between items-center gap-4">
+        <button onclick="showHome()" class="text-amazon-navy hover:underline text-sm font-semibold">&larr; Continue Shopping</button>
+        <div class="text-right">
+          <p class="text-lg font-bold">Subtotal: <span id="cartPageTotal" class="text-amazon-orange">$0.00</span></p>
+          <button onclick="checkout()" class="mt-2 bg-amazon-yellow hover:bg-amazon-orange text-amazon-navy font-bold px-8 py-3 rounded-lg shadow transition">Proceed to Checkout</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Cart Sidebar Drawer -->
+  <div id="cartSidebar" class="fixed inset-0 z-50 overflow-hidden hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleCartSidebar()"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+        <!-- Header -->
+        <div class="p-4 bg-amazon-navy text-white flex items-center justify-between">
+          <h2 class="text-lg font-bold flex items-center gap-2"><i class="fa-solid fa-cart-shopping text-amazon-yellow"></i> Your Cart</h2>
+          <button onclick="toggleCartSidebar()" class="text-gray-300 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <!-- Items List -->
+        <div id="cartSidebarItems" class="flex-1 overflow-y-auto p-4 divide-y">
+          <!-- Cart items populated by JS -->
+        </div>
+        <!-- Footer -->
+        <div class="p-4 bg-gray-50 border-t space-y-3">
+          <div class="flex justify-between font-bold text-lg">
+            <span>Subtotal:</span>
+            <span id="cartSidebarTotal" class="text-amazon-orange">$0.00</span>
+          </div>
+          <button onclick="checkout()" class="w-full bg-amazon-yellow hover:bg-amazon-orange text-amazon-navy font-bold py-3 rounded-lg shadow transition">Checkout Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Details Modal Popup -->
+  <div id="productModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+    <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl relative animate-fadeIn">
+      <button onclick="closeModal()" class="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 text-gray-700 w-9 h-9 rounded-full flex items-center justify-center font-bold z-10">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="modalContent" class="grid grid-cols-1 md:grid-cols-2">
+        <!-- Populate by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-amazon-navy text-gray-400 text-sm mt-12">
+    <div class="bg-amazon-light text-center py-3 text-white text-xs cursor-pointer hover:bg-gray-700" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+      Back to top
+    </div>
+    <div class="max-w-7xl mx-auto px-4 py-8 text-center space-y-2">
+      <p class="text-white font-bold">&copy; 2026 Mini Amazon Capstone Project. Built with HTML, Tailwind CSS & JavaScript.</p>
+      <p>Developed by Mahima Chaudhari</p>
+    </div>
+  </footer>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // Product Dataset
+    const products = [
+      { id: 1, name: "Wireless Noise Cancelling Headphones", category: "Electronics", price: 129.99, rating: 4.8, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80", description: "Premium sound quality with active noise cancellation and 30-hour battery life." },
+      { id: 2, name: "Smart Fitness Watch", category: "Electronics", price: 89.50, rating: 4.6, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80", description: "Track heart rate, sleep metrics, and workout routines with built-in GPS." },
+      { id: 3, name: "Classic Denim Jacket", category: "Fashion", price: 59.99, rating: 4.5, image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=600&q=80", description: "Timeless denim jacket tailored with durable cotton fabric and casual comfort." },
+      { id: 4, name: "Stainless Steel Espresso Maker", category: "Home & Kitchen", price: 45.00, rating: 4.7, image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?auto=format&fit=crop&w=600&q=80", description: "Brew authentic Italian espresso on stovetop with durable stainless steel build." },
+      { id: 5, name: "Minimalist Leather Backpack", category: "Fashion", price: 79.00, rating: 4.9, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80", description: "Sleek Genuine leather bag with dedicated 15-inch laptop sleeve and organizers." },
+      { id: 6, name: "Ergonomic Mechanical Keyboard", category: "Electronics", price: 110.00, rating: 4.8, image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80", description: "Tactile mechanical switches with customizable RGB lighting and wrist support." },
+      { id: 7, name: "Modern Ceramic Table Lamp", category: "Home & Kitchen", price: 34.99, rating: 4.3, image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80", description: "Soft ambient lighting fixture crafted from handmade matte ceramic material." },
+      { id: 8, name: "Data Science & Python Handbook", category: "Books", price: 29.99, rating: 4.9, image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80", description: "Comprehensive guide covering Pandas, Machine Learning, and Data Visualization." }
+    ];
+
+    // State Management via localStorage
+    let cart = JSON.parse(localStorage.getItem('mini_amazon_cart')) || [];
+
+    // Initialize UI
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts(products);
+      updateCartUI();
+    });
+
+    // Render Product Cards
+    function renderProducts(items) {
+      const grid = document.getElementById('productGrid');
+      document.getElementById('productCount').textContent = `Showing ${items.length} products`;
+      
+      if (items.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 font-medium">No products found matching your search.</div>`;
+        return;
+      }
+
+      grid.innerHTML = items.map(p => `
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden border border-gray-100 group">
+          <div class="relative overflow-hidden cursor-pointer" onclick="openModal(${p.id})">
+            <img src="${p.image}" alt="${p.name}" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
+            <span class="absolute top-2 right-2 bg-black/70 text-white text-xs font-bold px-2 py-1 rounded">★ ${p.rating}</span>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+            <div>
+              <span class="text-xs font-semibold text-amazon-orange uppercase">${p.category}</span>
+              <h3 onclick="openModal(${p.id})" class="font-bold text-gray-800 line-clamp-1 hover:text-amazon-orange cursor-pointer">${p.name}</h3>
+              <p class="text-xs text-gray-500 line-clamp-2 mt-1">${p.description}</p>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t">
+              <span class="text-xl font-extrabold text-gray-900">$${p.price.toFixed(2)}</span>
+              <button onclick="addToCart(${p.id})" class="bg-amazon-yellow hover:bg-amazon-orange text-amazon-navy font-bold px-3 py-1.5 rounded-md text-xs shadow transition">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Filter Category
+    function filterCategory(category) {
+      document.getElementById('sectionTitle').textContent = category === 'All' ? 'All Products' : `${category} Products`;
+      const filtered = category === 'All' ? products : products.filter(p => p.category === category);
+      renderProducts(filtered);
+    }
+
+    // Search Filter
+    function filterProducts() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = products.filter(p => p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query));
+      renderProducts(filtered);
+    }
+
+    function filterProductsMobile() {
+      const query = document.getElementById('searchInputMobile').value.toLowerCase();
+      const filtered = products.filter(p => p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query));
+      renderProducts(filtered);
+    }
+
+    // Modal Popup
+    function openModal(id) {
+      const p = products.find(item => item.id === id);
+      const content = document.getElementById('modalContent');
+      content.innerHTML = `
+        <div class="h-64 md:h-full">
+          <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">
+        </div>
+        <div class="p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <span class="text-xs font-bold text-amazon-orange uppercase">${p.category}</span>
+            <h2 class="text-xl font-bold text-gray-900 mt-1">${p.name}</h2>
+            <div class="flex items-center gap-2 mt-2">
+              <span class="bg-amazon-yellow text-amazon-navy font-bold text-xs px-2 py-0.5 rounded">★ ${p.rating}</span>
+              <span class="text-xs text-gray-500">Free Returns & Fast Delivery</span>
+            </div>
+            <p class="text-gray-600 text-sm mt-4 leading-relaxed">${p.description}</p>
+          </div>
+          <div class="space-y-3 pt-4 border-t">
+            <div class="text-2xl font-extrabold text-gray-900">$${p.price.toFixed(2)}</div>
+            <button onclick="addToCart(${p.id}); closeModal();" class="w-full bg-amazon-yellow hover:bg-amazon-orange text-amazon-navy font-bold py-3 rounded-lg shadow transition">Add to Cart</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('productModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('productModal').classList.add('hidden');
+    }
+
+    // Shopping Cart Operations
+    function addToCart(id) {
+      const existing = cart.find(item => item.id === id);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        const product = products.find(p => p.id === id);
+        cart.push({ ...product, quantity: 1 });
+      }
+      saveCart();
+      updateCartUI();
+    }
+
+    function updateQuantity(id, change) {
+      const item = cart.find(i => i.id === id);
+      if (item) {
+        item.quantity += change;
+        if (item.quantity <= 0) {
+          cart = cart.filter(i => i.id !== id);
+        }
+      }
+      saveCart();
+      updateCartUI();
+    }
+
+    function removeFromCart(id) {
+      cart = cart.filter(item => item.id !== id);
+      saveCart();
+      updateCartUI();
+    }
+
+    function saveCart() {
+      localStorage.setItem('mini_amazon_cart', JSON.stringify(cart));
+    }
+
+    function updateCartUI() {
+      const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+      document.getElementById('cartBadge').textContent = totalCount;
+      document.getElementById('cartSidebarTotal').textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById('cartPageTotal').textContent = `$${subtotal.toFixed(2)}`;
+
+      // Populate Sidebar
+      const sidebarContainer = document.getElementById('cartSidebarItems');
+      if (cart.length === 0) {
+        sidebarContainer.innerHTML = `<p class="text-center py-8 text-gray-500 font-medium">Your cart is empty.</p>`;
+      } else {
+        sidebarContainer.innerHTML = cart.map(item => `
+          <div class="py-3 flex items-center justify-between gap-3">
+            <img src="${item.image}" class="w-12 h-12 rounded object-cover">
+            <div class="flex-1">
+              <h4 class="text-xs font-bold line-clamp-1">${item.name}</h4>
+              <p class="text-xs text-gray-500">$${item.price.toFixed(2)}</p>
+              <div class="flex items-center gap-2 mt-1">
+                <button onclick="updateQuantity(${item.id}, -1)" class="w-5 h-5 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center text-xs font-bold">-</button>
+                <span class="text-xs font-bold">${item.quantity}</span>
+                <button onclick="updateQuantity(${item.id}, 1)" class="w-5 h-5 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center text-xs font-bold">+</button>
+              </div>
+            </div>
+            <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        `).join('');
+      }
+    }
+
+    function toggleCartSidebar() {
+      document.getElementById('cartSidebar').classList.toggle('hidden');
+    }
+
+    function showHome() {
+      document.getElementById('productsSection').classList.remove('hidden');
+      document.getElementById('cartPageView').classList.add('hidden');
+    }
+
+    function checkout() {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      alert("🎉 Order placed successfully! Thank you for shopping with Mini Amazon.");
+      cart = [];
+      saveCart();
+      updateCartUI();
+      if (!document.getElementById('cartSidebar').classList.contains('hidden')) {
+        toggleCartSidebar();
+      }
+      showHome();
+    }
+  </script>
+</body>
+</html>
